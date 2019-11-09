@@ -61,8 +61,8 @@ public class CitiesAndLangaugesGUI extends Application {
 
     // Statement for executing queries
     private Statement stmt;
-    private TextField cityTextField = new TextField();
-    private TextField languageTextField = new TextField();
+    private TextField fag = new TextField();
+    private TextField student = new TextField();
     private Label resultLabel = new Label();
 
     @Override // Override the start method in the Application class
@@ -72,14 +72,14 @@ public class CitiesAndLangaugesGUI extends Application {
 
         Button showGradeButton = new Button("How many speaks this language?");
         HBox hBox = new HBox(5);
-        hBox.getChildren().addAll(new Label("City"), cityTextField,
-                new Label("Language"), languageTextField, (showGradeButton));
+        hBox.getChildren().addAll(new Label("fag"), fag,
+                new Label("student"), student, (showGradeButton));
 
         VBox vBox = new VBox(10);
         vBox.getChildren().addAll(hBox, resultLabel);
 
-        cityTextField.setPrefColumnCount(8);
-        languageTextField.setPrefColumnCount(8);
+        fag.setPrefColumnCount(8);
+        student.setPrefColumnCount(8);
         showGradeButton.setOnAction(e -> {
             try {
                 showGrade();
@@ -100,7 +100,7 @@ public class CitiesAndLangaugesGUI extends Application {
         String password = DB_Settings.getPassword();
         String username = DB_Settings.geUsername();
         Connection connection = DriverManager.getConnection
-                ("jdbc:mysql://localhost/world", username, password);
+                ("jdbc:mysql://localhost:3306/Zealand?serverTimezone=UTC", username, password);
         System.out.println("Database connected.");
 
         // Create a statement
@@ -108,27 +108,25 @@ public class CitiesAndLangaugesGUI extends Application {
     }
 
     private void showGrade() throws SQLException {
-        String city = cityTextField.getText();
-        String language = languageTextField.getText();
+        String city = fag.getText();
+        String language = student.getText();
 
         String queryString =
-                "SELECT city.name, country.Name, countrylanguage.Language, Percentage\n" +
-                        "FROM world.country, world.countrylanguage, world.city\n" +
-                        "WHERE country.Code = countrylanguage.CountryCode\n" +
-                        "AND country.Code = city.CountryCode\n" +
-                        "AND city.Name = '" + city + "'\n" +
-                        "AND countrylanguage.Language = '" + language + "';";
+                "SELECT student.id, studerende.fornavn, studerende.efternavn, fag.navn, fag.id\n" +
+                        "FROM studerende, tilmeldinger, fag\n" +
+                        "WHERE tilmeldinger.studentID = studerende.id \n" +
+                        "AND tilmeldinger.FagID = fag.id \n6";
 
         ResultSet resultSet = stmt.executeQuery(queryString);
-
+        stmt.close();
         if (resultSet.next()) {
-            String cityName = resultSet.getString("city.name");
+            String studentName = resultSet.getString("student.name");
             String countryLanguage = resultSet.getString("countrylanguage.Language");
             String percentage = resultSet.getString("Percentage");
 
             // Display result in a label
             resultLabel.setText("     " + percentage + "% of the citizens in " +
-                    cityName + " speaks " + countryLanguage + ".");
+                    studentName + " speaks " + countryLanguage + ".");
         } else {
             resultLabel.setText("City and/or language not found.");
         }
@@ -142,3 +140,17 @@ public class CitiesAndLangaugesGUI extends Application {
         launch(args);
     }
 }
+
+/*   private void showGrade() throws SQLException {
+        String city = cityTextField.getText();
+        String language = languageTextField.getText();
+
+        String queryString =
+                "SELECT city.name, country.Name, countrylanguage.Language, Percentage\n" +
+                        "FROM world.country, world.countrylanguage, world.city\n" +
+                        "WHERE country.Code = countrylanguage.CountryCode\n" +
+                        "AND country.Code = city.CountryCode\n" +
+                        "AND city.Name = '" + city + "'\n" +
+                        "AND countrylanguage.Language = '" + language + "';";
+
+        ResultSet resultSet = stmt.executeQuery(queryString); */

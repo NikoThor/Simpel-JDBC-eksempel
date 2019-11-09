@@ -20,7 +20,7 @@ public class SimpleJdbc {
 
         // ** Med Scanner kan vi få brugeren til at indtaste, hvilket land, de vil se info om
          Scanner scanner = new Scanner(System.in);
-         System.out.print("Hvilket student vil du se oplysninger om? ±");
+         System.out.print("Hvilken student vil du se oplysninger om? vælg mellem N, T og T og husk %! ±");
          String student = scanner.nextLine();
          String mitQuery ="SELECT studerende.fornavn, studerende.efternavn FROM studerende WHERE fornavn LIKE '" + student + "';";
 
